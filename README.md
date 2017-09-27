@@ -1,7 +1,7 @@
-# MicroPython GNSS L76-L I2C driver
+# MicroPython LIS2HH12 I2C driver
 
-MicroPython library for accessin the [Quectel GNSS L76-L](http://www.quectel.com/product/l76l.htm) receiver over I2C. L76-L is a
-concurrent receiver module integrating GPS, GLONASS, Galileo and QZSS systems.
+MicroPython library for accessing the [STMicroelectronics LIS2HH12](http://www.st.com/en/mems-and-sensors/lis2hh12.html) 3-axis accelerometer over
+I2C. The LIS2HH12 is an ultra-low-power high-performance three-axis linear accelerometer belonging to the “pico” family. It has full scales of ±2g/±4g/±8g and is capable of measuring accelerations with output data rates from 10 Hz to 800 Hz.
 
 ## Usage
 
