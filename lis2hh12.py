@@ -25,24 +25,46 @@ _OUT_Z_H = const(0x2d)
 
 # CTRL1
 _ODR_MASK = const(0b01110000)
-_ODR_OFF = const(0b00000000)
-_ODR_50HZ = const(0b00100000)
-_ODR_100HZ = const(0b01100000)
-_ODR_200HZ = const(0b01000000)
+ODR_OFF = const(0b00000000)
+ODR_50HZ = const(0b00100000)
+ODR_100HZ = const(0b01100000)
+ODR_200HZ = const(0b01000000)
+
+# CTRL4
+_FS_MASK = const(0b00110000)
+FS_2G = const(0b00000000)
+FS_4G = const(0b00100000)
+FS_8G = const(0b00110000)
+
+_SO_2G = const(61)
+_SO_4G = const(122)
+_SO_8G = const(244)
 
 class LIS2HH12:
-    def __init__(self, i2c=None, address=0x1e):
+    def __init__(self, i2c = None, address = 0x1e, odr = ODR_100HZ, fs = FS_2G):
         if i2c is None:
             self.i2c = I2C(scl=Pin(26), sda=Pin(25))
         else:
             self.i2c = i2c
 
         self.address = address
+        self._odr(odr)
+        self._fs(fs)
 
-        uchar = self._register_char(_CTRL1)
-        uchar &= ~_ODR_MASK # clear ODR bits
-        uchar |= _ODR_100HZ # set 100Hz
-        self._register_char(_CTRL1, uchar)
+    def read_raw(self):
+        x = self._register_word(_OUT_X_L)
+        y = self._register_word(_OUT_Y_L)
+        z = self._register_word(_OUT_Z_L)
+        return (x, y, z)
+
+    def read(self):
+        x = self._register_word(_OUT_X_L) * self._so / 1000000
+        y = self._register_word(_OUT_Y_L) * self._so / 1000000
+        z = self._register_word(_OUT_Z_L) * self._so / 1000000
+        return (x, y, z)
+
+    def whoami(self):
+        return self._register_char(_WHO_AM_I)
 
     def _register_word(self, register, value=None):
         if value is None:
@@ -57,11 +79,26 @@ class LIS2HH12:
         data = ustruct.pack("<b", value)
         self.i2c.writeto_mem(self.address, register, data)
 
-    def read(self):
-        x = self._register_word(_OUT_X_L)
-        y = self._register_word(_OUT_Y_L)
-        z = self._register_word(_OUT_Z_L)
-        return (x, y, z)
+    def _fs(self, value = None):
+        if value is None:
+            return None # TODO
+        char = self._register_char(_CTRL4)
+        char &= ~_FS_MASK # clear FS bits
+        char |= value
+        self._register_char(_CTRL4, char)
 
-    def whoami(self):
-        return self._register_char(_WHO_AM_I)
+        # Store the sensitivity multiplier
+        if FS_2G == value:
+            self._so = _SO_2G
+        elif FS_4G == value:
+            self._so = _SO_4G
+        elif FS_8G == value:
+            self._so = _SO_8G
+
+    def _odr(self, value = None):
+        if value is None:
+            return None # TODO
+        char = self._register_char(_CTRL1)
+        char &= ~_ODR_MASK # clear ODR bits
+        char |= value
+        self._register_char(_CTRL1, char)
