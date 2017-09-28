@@ -39,29 +39,29 @@ class LIS2HH12:
 
         self.address = address
 
-        uchar = self._register_uchar(_CTRL1)
+        uchar = self._register_char(_CTRL1)
         uchar &= ~_ODR_MASK # clear ODR bits
         uchar |= _ODR_100HZ # set 100Hz
-        self._register_uchar(_CTRL1, uchar)
+        self._register_char(_CTRL1, uchar)
 
-    def _register_uword(self, register, value=None):
+    def _register_word(self, register, value=None):
         if value is None:
             data = self.i2c.readfrom_mem(self.address, register, 2)
-            return ustruct.unpack("<H", data)[0]
-        data = ustruct.pack("<H", value)
+            return ustruct.unpack("<h", data)[0]
+        data = ustruct.pack("<h", value)
         self.i2c.writeto_mem(self.address, register, data)
 
-    def _register_uchar(self, register, value=None):
+    def _register_char(self, register, value=None):
         if value is None:
             return self.i2c.readfrom_mem(self.address, register, 1)[0]
-        data = ustruct.pack("<B", value)
+        data = ustruct.pack("<b", value)
         self.i2c.writeto_mem(self.address, register, data)
 
     def read(self):
-        x = self._register_uword(_OUT_X_L)
-        y = self._register_uword(_OUT_Y_L)
-        z = self._register_uword(_OUT_Z_L)
+        x = self._register_word(_OUT_X_L)
+        y = self._register_word(_OUT_Y_L)
+        z = self._register_word(_OUT_Z_L)
         return (x, y, z)
 
     def whoami(self):
-        return self._register_uchar(_WHO_AM_I)
+        return self._register_char(_WHO_AM_I)
