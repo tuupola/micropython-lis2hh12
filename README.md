@@ -5,21 +5,7 @@ I2C. The LIS2HH12 is an ultra-low-power high-performance three-axis linear accel
 
 ## Usage
 
-Using default I2C pins for ESP32.
-
-```python
-import utime
-from lis2hh12 import LIS2HH12
-
-sensor = LIS2HH12()
-
-while True:
-    print(sensor.whoami())
-    print(sensor.read())
-    utime.sleep_ms(1000)
-```
-
-Custom I2C pins when using non ESP32 board.
+Simple test with never ending loop.
 
 ```python
 import utime
@@ -29,10 +15,32 @@ from lis2hh12 import LIS2HH12
 i2c = I2C(scl=Pin(26), sda=Pin(25))
 sensor = LIS2HH12(i2c)
 
+print("LIS2HH12 id: " + hex(sensor.whoami()))
+
 while True:
-    print(sensor.whoami())
     print(sensor.read())
     utime.sleep_ms(1000)
+```
+
+More realistic usage with timer. If you get `OSError: 26` after soft reboot do a hard reboot.
+
+```python
+import micropython
+from machine import I2C, Pin, Timer
+from lis2hh12 import LIS2HH12
+
+micropython.alloc_emergency_exception_buf(100)
+
+i2c = I2C(scl=Pin(26), sda=Pin(25))
+sensor = LIS2HH12(i2c)
+
+def read_sensor(timer):
+    print(sensor.read())
+
+print("LIS2HH12 id: " + hex(sensor.whoami()))
+
+timer_0 = Timer(0)
+timer_0.init(period=1000, mode=Timer.PERIODIC, callback=read_sensor)
 ```
 
 ## License
