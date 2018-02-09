@@ -58,6 +58,10 @@ class LIS2HH12:
             self.i2c = i2c
 
         self.address = address
+
+        if 0x41 != self.whoami:
+            raise RuntimeError("LIS2HH12 not found in I2C bus.")
+
         self._odr(odr)
         self._fs(fs)
 
