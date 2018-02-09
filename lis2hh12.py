@@ -11,9 +11,9 @@
 MicroPython I2C driver for LIS2HH12 3-axis accelerometer
 """
 
-import utime
-import ustruct
-from machine import I2C, Pin
+import ustruct # pylint: disable=import-error
+from machine import I2C, Pin # pylint: disable=import-error
+from micropython import const # pylint: disable=import-error
 
 _TEMP_L = const(0x0b)
 _TEMP_H = const(0x0c)
@@ -50,7 +50,8 @@ _SO_4G = const(122)
 _SO_8G = const(244)
 
 class LIS2HH12:
-    def __init__(self, i2c = None, address = 0x1e, odr = ODR_100HZ, fs = FS_2G):
+    """Class which provides interface to LIS2HH12 3-axis accelerometer."""
+    def __init__(self, i2c=None, address=0x1e, odr=ODR_100HZ, fs=FS_2G):
         if i2c is None:
             self.i2c = I2C(scl=Pin(26), sda=Pin(25))
         else:
@@ -80,17 +81,17 @@ class LIS2HH12:
             data = self.i2c.readfrom_mem(self.address, register, 2)
             return ustruct.unpack("<h", data)[0]
         data = ustruct.pack("<h", value)
-        self.i2c.writeto_mem(self.address, register, data)
+        return self.i2c.writeto_mem(self.address, register, data)
 
     def _register_char(self, register, value=None):
         if value is None:
             return self.i2c.readfrom_mem(self.address, register, 1)[0]
         data = ustruct.pack("<b", value)
-        self.i2c.writeto_mem(self.address, register, data)
+        return self.i2c.writeto_mem(self.address, register, data)
 
-    def _fs(self, value = None):
-        if value is None:
-            return None # TODO
+    def _fs(self, value=None):
+        # if value is None:
+        #     return None # TODO
         char = self._register_char(_CTRL4)
         char &= ~_FS_MASK # clear FS bits
         char |= value
@@ -104,9 +105,9 @@ class LIS2HH12:
         elif FS_8G == value:
             self._so = _SO_8G
 
-    def _odr(self, value = None):
-        if value is None:
-            return None # TODO
+    def _odr(self, value=None):
+        # if value is None:
+        #     return None # TODO
         char = self._register_char(_CTRL1)
         char &= ~_ODR_MASK # clear ODR bits
         char |= value
