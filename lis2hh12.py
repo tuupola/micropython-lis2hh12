@@ -17,7 +17,7 @@ from micropython import const # pylint: disable=import-error
 
 _TEMP_L = const(0x0b)
 _TEMP_H = const(0x0c)
-_WHO_AM_I = const(0x0f)
+_WHO_AM_I = const(0x0f) # 0b01000001 = 0x41
 _CTRL1 = const(0x20)
 _CTRL2 = const(0x21)
 _CTRL3 = const(0x22)
@@ -63,6 +63,10 @@ class LIS2HH12:
 
     @property
     def acceleration(self):
+        """
+        Acceleration measured by the sensor. Will return a 3-tuple of
+        X, Y, Z axis acceleration values in m/s^2.
+        """
         x = self._register_word(_OUT_X_L) * self._so / 1000000
         y = self._register_word(_OUT_Y_L) * self._so / 1000000
         z = self._register_word(_OUT_Z_L) * self._so / 1000000
@@ -70,6 +74,7 @@ class LIS2HH12:
 
     @property
     def whoami(self):
+        """ Value of the whoami register. """
         return self._register_char(_WHO_AM_I)
 
     def _register_word(self, register, value=None):
@@ -85,9 +90,7 @@ class LIS2HH12:
         data = ustruct.pack("<b", value)
         return self.i2c.writeto_mem(self.address, register, data)
 
-    def _fs(self, value=None):
-        # if value is None:
-        #     return None # TODO
+    def _fs(self, value):
         char = self._register_char(_CTRL4)
         char &= ~_FS_MASK # clear FS bits
         char |= value
@@ -101,9 +104,7 @@ class LIS2HH12:
         elif FS_8G == value:
             self._so = _SO_8G
 
-    def _odr(self, value=None):
-        # if value is None:
-        #     return None # TODO
+    def _odr(self, value):
         char = self._register_char(_CTRL1)
         char &= ~_ODR_MASK # clear ODR bits
         char |= value
