@@ -15,14 +15,14 @@ from lis2hh12 import LIS2HH12
 i2c = I2C(scl=Pin(26), sda=Pin(25))
 sensor = LIS2HH12(i2c)
 
-print("LIS2HH12 id: " + hex(sensor.whoami()))
+print("LIS2HH12 id: " + hex(sensor.whoami))
 
 while True:
-    print(sensor.read())
+    print(sensor.acceleration)
     utime.sleep_ms(1000)
 ```
 
-More realistic usage with timer. If you get `OSError: 26` after soft reboot do a hard reboot.
+More realistic usage with timer. If you get `OSError: 26` or `i2c driver install error` after soft reboot do a hard reboot.
 
 ```python
 import micropython
@@ -35,9 +35,9 @@ i2c = I2C(scl=Pin(26), sda=Pin(25))
 sensor = LIS2HH12(i2c)
 
 def read_sensor(timer):
-    print(sensor.read())
+    print(sensor.acceleration)
 
-print("LIS2HH12 id: " + hex(sensor.whoami()))
+print("LIS2HH12 id: " + hex(sensor.whoami))
 
 timer_0 = Timer(0)
 timer_0.init(period=1000, mode=Timer.PERIODIC, callback=read_sensor)

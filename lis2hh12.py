@@ -61,18 +61,14 @@ class LIS2HH12:
         self._odr(odr)
         self._fs(fs)
 
-    def read_raw(self):
-        x = self._register_word(_OUT_X_L)
-        y = self._register_word(_OUT_Y_L)
-        z = self._register_word(_OUT_Z_L)
-        return (x, y, z)
-
-    def read(self):
+    @property
+    def acceleration(self):
         x = self._register_word(_OUT_X_L) * self._so / 1000000
         y = self._register_word(_OUT_Y_L) * self._so / 1000000
         z = self._register_word(_OUT_Z_L) * self._so / 1000000
         return (x, y, z)
 
+    @property
     def whoami(self):
         return self._register_char(_WHO_AM_I)
 
