@@ -35,9 +35,12 @@ _OUT_Z_H = const(0x2d)
 # CTRL1
 _ODR_MASK = const(0b01110000)
 ODR_OFF = const(0b00000000)
-ODR_50HZ = const(0b00100000)
-ODR_100HZ = const(0b01100000)
+ODR_10HZ  = const(0b00010000)
+ODR_50HZ  = const(0b00100000)
+ODR_100HZ = const(0b00110000)
 ODR_200HZ = const(0b01000000)
+ODR_400HZ = const(0b01010000)
+ODR_800HZ = const(0b01100000)
 
 # CTRL4
 _FS_MASK = const(0b00110000)
@@ -45,13 +48,16 @@ FS_2G = const(0b00000000)
 FS_4G = const(0b00100000)
 FS_8G = const(0b00110000)
 
-_SO_2G = const(61)
-_SO_4G = const(122)
-_SO_8G = const(244)
+_SO_2G = 0.061 # 0.061 mg / digit
+_SO_4G = 0.122 # 0.122 mg / digit
+_SO_8G = 0.244 # 0.244 mg / digit
+
+SF_G = 0.001 # 1 mg = 0.001 g
+SF_SI = 0.00980665 # 1 mg = 0.00980665 m/s2
 
 class LIS2HH12:
     """Class which provides interface to LIS2HH12 3-axis accelerometer."""
-    def __init__(self, i2c=None, address=0x1e, odr=ODR_100HZ, fs=FS_2G):
+    def __init__(self, i2c=None, address=0x1e, odr=ODR_100HZ, fs=FS_2G, sf=SF_SI):
         if i2c is None:
             self.i2c = I2C(scl=Pin(26), sda=Pin(25))
         else:
@@ -62,18 +68,23 @@ class LIS2HH12:
         if 0x41 != self.whoami:
             raise RuntimeError("LIS2HH12 not found in I2C bus.")
 
+        self._sf = sf
         self._odr(odr)
         self._fs(fs)
 
     @property
     def acceleration(self):
         """
-        Acceleration measured by the sensor. Will return a 3-tuple of
-        X, Y, Z axis acceleration values in m/s^2.
+        Acceleration measured by the sensor. By default will return a
+        3-tuple of X, Y, Z axis acceleration values in m/s^2. Will return
+        values in g if constructor was provided `sf=SF_G` parameter.
         """
-        x = self._register_word(_OUT_X_L) * self._so / 1000000
-        y = self._register_word(_OUT_Y_L) * self._so / 1000000
-        z = self._register_word(_OUT_Z_L) * self._so / 1000000
+        so = self._so
+        sf = self._sf
+
+        x = self._register_word(_OUT_X_L) * so * sf
+        y = self._register_word(_OUT_Y_L) * so * sf
+        z = self._register_word(_OUT_Z_L) * so * sf
         return (x, y, z)
 
     @property
@@ -113,3 +124,4 @@ class LIS2HH12:
         char &= ~_ODR_MASK # clear ODR bits
         char |= value
         self._register_char(_CTRL1, char)
+

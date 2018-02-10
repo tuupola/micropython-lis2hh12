@@ -22,7 +22,17 @@ while True:
     utime.sleep_ms(1000)
 ```
 
-More realistic usage with timer. If you get `OSError: 26` or `i2c driver install error` after soft reboot do a hard reboot.
+By default the library returns 3-tuple of X, Y, Z axis acceleration values in m/s^2 which is the SI standard. To get the acceleration values in g instead set the scale factor to `SF_G` in the constructor.
+
+```python
+from machine import I2C, Pin
+from lis2hh12 import LIS2HH12, SF_G
+
+i2c = I2C(scl=Pin(26), sda=Pin(25))
+sensor = LIS2HH12(i2c, sf=SF_G)
+```
+
+More realistic example usage with timer. If you get `OSError: 26` or `i2c driver install error` after soft reboot do a hard reboot.
 
 ```python
 import micropython
