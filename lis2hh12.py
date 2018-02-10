@@ -1,11 +1,13 @@
+#
 # This file is part of MicroPython LIS2HH12 driver
-# Copyright (c) 2017 Mika Tuupola
+# Copyright (c) 2017-2018 Mika Tuupola
 #
 # Licensed under the MIT license:
 #   http://www.opensource.org/licenses/mit-license.php
 #
 # Project home:
 #   https://github.com/tuupola/micropython-lis2hh12
+#
 
 """
 MicroPython I2C driver for LIS2HH12 3-axis accelerometer
