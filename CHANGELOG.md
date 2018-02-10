@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## [0.2.0](https://github.com/tuupola/micropython-lis2hh12/compare/0.2.0...0.1.0) - Unreleased
+## [0.2.0](https://github.com/tuupola/micropython-lis2hh12/compare/0.2.0...0.1.0) - 2018-02-10
 ### Changed
 - Acceleration values are accessed as a property `sensor.acceleration` instead of function `sensor.acceleration()`.
 - By default sensor values are now returned as `m/s^2` instead of `g`.
