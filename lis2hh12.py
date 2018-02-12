@@ -17,6 +17,8 @@ import ustruct # pylint: disable=import-error
 from machine import I2C, Pin # pylint: disable=import-error
 from micropython import const # pylint: disable=import-error
 
+__version__ = "0.3.0-dev"
+
 _TEMP_L = const(0x0b)
 _TEMP_H = const(0x0c)
 _WHO_AM_I = const(0x0f) # 0b01000001 = 0x41
