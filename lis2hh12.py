@@ -78,8 +78,12 @@ class LIS2HH12:
     def acceleration(self):
         """
         Acceleration measured by the sensor. By default will return a
-        3-tuple of X, Y, Z axis acceleration values in m/s^2. Will return
-        values in g if constructor was provided `sf=SF_G` parameter.
+        3-tuple of X, Y, Z axis acceleration values in m/s^2. Will
+        return values in g if constructor was provided `sf=SF_G`
+        parameter.
+
+        On ESP32 currently takes aproximately 4.6ms to return full
+        3-tuple reading.
         """
         so = self._so
         sf = self._sf
@@ -127,3 +131,8 @@ class LIS2HH12:
         char |= value
         self._register_char(_CTRL1, char)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        pass
