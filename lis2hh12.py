@@ -119,9 +119,6 @@ class LIS2HH12:
         data = ustruct.pack("<b", value)
         return self.i2c.writeto_mem(self.address, register, data)
 
-    def enable_act_int(self):
-        self._register_char(_CTRL6, 0x0A)
-
     def _fs(self, value):
         char = self._register_char(_CTRL4)
         char &= ~_FS_MASK # clear FS bits
