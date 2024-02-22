@@ -21,7 +21,9 @@ __version__ = "0.3.0-dev"
 
 _TEMP_L = const(0x0b)
 _TEMP_H = const(0x0c)
-_WHO_AM_I = const(0x0f) # 0b01000001 = 0x41
+# LIS2HH12: 0b01000001 = 0x41
+# LIS2DH12: 0b00110011 = 0x33
+_WHO_AM_I = const(0x0f)
 _CTRL1 = const(0x20)
 _CTRL2 = const(0x21)
 _CTRL3 = const(0x22)
@@ -69,8 +71,12 @@ class LIS2HH12:
 
         self.address = address
 
-        if 0x41 != self.whoami:
-            raise RuntimeError("LIS2HH12 not found in I2C bus.")
+        if 0x41 == self.whoami:
+            pass
+        elif 0x33 == self.whoami:
+            pass
+        else:
+            raise RuntimeError("LIS2HH12 or LIS2DH12 not found on I2C bus.")
 
         self._sf = sf
         self._odr(odr)
