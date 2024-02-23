@@ -1,6 +1,6 @@
 #
 # This file is part of MicroPython LIS2HH12 driver
-# Copyright (c) 2017-2018 Mika Tuupola
+# Copyright (c) 2017-2024 Mika Tuupola
 #
 # Licensed under the MIT license:
 #   http://www.opensource.org/licenses/mit-license.php

@@ -55,4 +55,4 @@ timer_0.init(period=1000, mode=Timer.PERIODIC, callback=read_sensor)
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
